@@ -15,11 +15,8 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import { Card, CardContent, TextField } from '@mui/material';
+import { Button, Card, CardContent, TextField } from '@mui/material';
 
 import { Link, Outlet } from 'react-router-dom';
 
@@ -87,7 +84,20 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function Draw() {
     const theme = useTheme();
     const [open, setOpen] = React.useState(() => true);
+    const [nodeText, setNodeText] = React.useState('');
 
+    const handleAddNode = () => {
+        if (nodeText.trim()) {
+            // Dispatch event or call function to add node (via context or global store)
+            const newNodeEvent = new CustomEvent("add-text-node", { detail: nodeText });
+            window.dispatchEvent(newNodeEvent);
+            setNodeText('');
+        }
+    };
+
+    const handleReset = () => {
+        setNodeText('');
+    };
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -115,20 +125,15 @@ export default function Draw() {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div">
-                        Persistent drawer
-                    </Typography>
-
-
-                    <List>
+                    <List sx={{ display: 'flex', gap: 2, ml: 4 }}>
                         <ListItem disablePadding>
                             <ListItemButton component={Link} to="/">
                                 <ListItemText primary="Home" />
                             </ListItemButton>
                         </ListItem>
                         <ListItem disablePadding>
-                            <ListItemButton component={Link} to="/about">
-                                <ListItemText primary="About" />
+                            <ListItemButton component={Link} to="/layouts">
+                                <ListItemText primary="Layouts" />
                             </ListItemButton>
                         </ListItem>
                     </List>
@@ -155,6 +160,7 @@ export default function Draw() {
                 <Divider />
                 <List>
 
+                    {/* Card Form section */}
                     <Card>
                         <CardContent>
                             <TextField
@@ -163,7 +169,13 @@ export default function Draw() {
                                 fullWidth
                                 multiline // if you want a multi-line input
                                 rows={4} // specify visible rows for multiline
+                                value={nodeText}
+                                onChange={(e) => setNodeText(e.target.value)}
                             />
+                            <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                <Button onClick={handleAddNode}>Add</Button>
+                                <Button onClick={handleReset}>Reset</Button>
+                            </Box>
                         </CardContent>
                     </Card>
 
@@ -173,6 +185,7 @@ export default function Draw() {
             <Main open={open}>
                 <DrawerHeader />
                 <Box sx={{ p: 2 }}>
+                    {/* Home Component */}
                     <Outlet />
                 </Box>
             </Main>
