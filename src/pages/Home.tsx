@@ -95,7 +95,10 @@ export default function Home(props: any) {
             </ReactFlow>
 
             {/* <Button onClick={handleSave}>Save</Button> */}
-            <Button onClick={() => props.onSave(nodes, edges)}>
+            <Button 
+                variant={isEditing ? 'secondary' : 'contained'}
+                onClick={() => props.onSave(nodes, edges)}
+            >
                 {isEditing ? 'Update Layout' : 'Save Layout'}
             </Button>
 

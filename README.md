@@ -1,69 +1,66 @@
-# React + TypeScript + Vite
+# BiteSpeed Flow Builder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React-based flow builder for creating and managing message flows using draggable nodes and edges.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 1. **Text Node**
+- Supports only one type of message: **Text Message**.
+- Multiple Text Nodes can be added to a single flow.
+- Nodes are added by dragging and dropping from the Nodes Panel.
 
-## Expanding the ESLint configuration
+### 2. **Nodes Panel**
+- Displays all node types supported by the Flow Builder.
+- Currently supports only the Message Node.
+- Designed to be extensible for future node types.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 3. **Edge**
+- Connects two nodes together visually and logically.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 4. **Source Handle**
+- The starting point for a connecting edge.
+- Only **one edge** can originate from a source handle.
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### 5. **Target Handle**
+- The endpoint for a connecting edge.
+- Multiple edges can connect to a single target handle.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 6. **Settings Panel**
+- Replaces the Nodes Panel when a node is selected.
+- Allows editing the text of the selected Text Node.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 7. **Save Button**
+- Saves the current flow layout.
+- Displays an error if there are multiple nodes and more than one node has no incoming connections (empty target handles).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Getting Started
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+
+3. **Open in browser:**
+   Visit [http://localhost:5173](http://localhost:5173)
+
+## Project Structure
+
+- `src/pages/Editor.tsx` — Handles flow editing and saving logic.
+- `src/pages/Home.tsx` — Main flow builder UI.
+- `src/components/Draw.tsx` — Layout and navigation.
+- `src/pages/Layouts.tsx` — Displays saved layouts.
+
+## Future Improvements
+
+- Add more node types to the Nodes Panel.
+- Enhance validation and error handling.
+- Improve UI/UX for large flows.
+
+---
+
+**BiteSpeed Flow Builder** — Easily create, connect, and manage message flows with extensible node

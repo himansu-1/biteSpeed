@@ -133,7 +133,7 @@ export default function Draw() {
                         </ListItem>
                         <ListItem disablePadding>
                             <ListItemButton component={Link} to="/layouts">
-                                <ListItemText primary="Layouts" />
+                                <ListItemText primary="Layout" />
                             </ListItemButton>
                         </ListItem>
                     </List>
@@ -172,9 +172,9 @@ export default function Draw() {
                                 value={nodeText}
                                 onChange={(e) => setNodeText(e.target.value)}
                             />
-                            <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                                <Button onClick={handleAddNode}>Add</Button>
-                                <Button onClick={handleReset}>Reset</Button>
+                            <Box sx={{ display: 'flex', gap: 2, mt: 2, justifyContent: 'center' }}>
+                                <Button variant='contained' onClick={handleAddNode}>Add</Button>
+                                <Button variant='outlined' onClick={handleReset}>Reset</Button>
                             </Box>
                         </CardContent>
                     </Card>
