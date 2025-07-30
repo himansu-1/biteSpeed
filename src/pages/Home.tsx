@@ -1,4 +1,4 @@
-import { Button, TextField } from '@mui/material';
+import { Button } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import ReactFlow, {
     addEdge,
@@ -39,16 +39,24 @@ export default function Home(props: any) {
 
     const onConnect = useCallback(
         (params: Edge | Connection) => {
+            const source = params.source;
+            const target = selectedNode?.id ?? params.target;
+
+            if (!source || !target) return;
 
             const edgeWithArrow: Edge = {
-                ...params,
-                target: selectedNode?.id ?? params.target,
+                id: `${source}-${target}-${Date.now()}`, // ensure a unique ID
+                source,
+                target,
+                sourceHandle: params.sourceHandle ?? null,
+                targetHandle: params.targetHandle ?? null,
                 markerEnd: {
                     type: MarkerType.ArrowClosed,
                     color: 'black',
                 },
-                style: { stroke: 'black' }
+                style: { stroke: 'black' },
             };
+
 
             setEdges((eds) => addEdge(edgeWithArrow, eds));
         },
@@ -95,8 +103,8 @@ export default function Home(props: any) {
             </ReactFlow>
 
             {/* <Button onClick={handleSave}>Save</Button> */}
-            <Button 
-                variant={isEditing ? 'secondary' : 'contained'}
+            <Button
+                variant={isEditing ? 'outlined' : 'contained'}
                 onClick={() => props.onSave(nodes, edges)}
             >
                 {isEditing ? 'Update Layout' : 'Save Layout'}

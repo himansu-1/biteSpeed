@@ -7,7 +7,6 @@ import MuiAppBar from '@mui/material/AppBar';
 import type { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -16,14 +15,15 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import { Button, Card, CardContent, TextField } from '@mui/material';
+import { Button, Card, CardContent, TextField, useMediaQuery } from '@mui/material';
 
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 
 const drawerWidth = 240;
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
+const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' && prop !== 'showDrawer' })<{
     open?: boolean;
+    showDrawer?: boolean;
 }>(({ theme }) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
@@ -31,7 +31,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
-    marginLeft: `-${drawerWidth}px`,
+    marginLeft: 0,
     variants: [
         {
             props: ({ open }) => open,
@@ -85,6 +85,9 @@ export default function Draw() {
     const theme = useTheme();
     const [open, setOpen] = React.useState(() => true);
     const [nodeText, setNodeText] = React.useState('');
+    const location = useLocation();
+    const isHomePage = location.pathname === '/';
+    const isTabletOrBelow = useMediaQuery('(max-width: 960px)');
 
     const handleAddNode = () => {
         if (nodeText.trim()) {
@@ -106,25 +109,32 @@ export default function Draw() {
         setOpen(false);
     };
 
+    React.useEffect(() => {
+        if (isTabletOrBelow) {
+            setOpen(false); // Close drawer on mobile
+        }
+    }, [isTabletOrBelow]);
+
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <AppBar position="fixed" open={open}>
+            <AppBar position="fixed" open={isHomePage && open}>
                 <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        edge="start"
-                        sx={[
-                            {
-                                mr: 2,
-                            },
-                            open && { display: 'none' },
-                        ]}
-                    >
-                        <MenuIcon />
-                    </IconButton>
+                    {
+                        isHomePage && !open && (
+                            <IconButton
+                                color="inherit"
+                                aria-label="open drawer"
+                                onClick={handleDrawerOpen}
+                                edge="start"
+                                sx={{
+                                    marginRight: 5,
+                                }}
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                        )
+                    }
                     <List sx={{ display: 'flex', gap: 2, ml: 4 }}>
                         <ListItem disablePadding>
                             <ListItemButton component={Link} to="/">
@@ -139,52 +149,59 @@ export default function Draw() {
                     </List>
                 </Toolbar>
             </AppBar>
-            <Drawer
-                sx={{
-                    width: drawerWidth,
-                    flexShrink: 0,
-                    '& .MuiDrawer-paper': {
+            { // This is Side Draw component
+                isHomePage &&
+                (<Drawer
+                    sx={{
                         width: drawerWidth,
-                        boxSizing: 'border-box',
-                    },
-                }}
-                variant="persistent"
-                anchor="left"
-                open={open}
-            >
-                <DrawerHeader>
-                    <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                    </IconButton>
-                </DrawerHeader>
-                <Divider />
-                <List>
+                        flexShrink: 0,
+                        '& .MuiDrawer-paper': {
+                            width: drawerWidth,
+                            boxSizing: 'border-box',
+                        },
+                    }}
+                    variant="persistent"
+                    anchor="left"
+                    open={open}
+                >
+                    <DrawerHeader>
+                        <IconButton onClick={handleDrawerClose}>
+                            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                        </IconButton>
+                    </DrawerHeader>
+                    <Divider />
+                    <List>
 
-                    {/* Card Form section */}
-                    <Card>
-                        <CardContent>
-                            <TextField
-                                label="Enter your text here"
-                                variant="outlined" // or "filled", "standard"
-                                fullWidth
-                                multiline // if you want a multi-line input
-                                rows={4} // specify visible rows for multiline
-                                value={nodeText}
-                                onChange={(e) => setNodeText(e.target.value)}
-                            />
-                            <Box sx={{ display: 'flex', gap: 2, mt: 2, justifyContent: 'center' }}>
-                                <Button variant='contained' onClick={handleAddNode}>Add</Button>
-                                <Button variant='outlined' onClick={handleReset}>Reset</Button>
-                            </Box>
-                        </CardContent>
-                    </Card>
+                        {/* Card Form section */}
+                        <Card>
+                            <CardContent>
+                                <TextField
+                                    label="Enter your text here"
+                                    variant="outlined" // or "filled", "standard"
+                                    fullWidth
+                                    multiline // if you want a multi-line input
+                                    rows={4} // specify visible rows for multiline
+                                    value={nodeText}
+                                    onChange={(e) => setNodeText(e.target.value)}
+                                />
+                                <Box sx={{ display: 'flex', gap: 2, mt: 2, justifyContent: 'center' }}>
+                                    <Button variant='contained' onClick={handleAddNode}>Add</Button>
+                                    <Button variant='outlined' onClick={handleReset}>Reset</Button>
+                                </Box>
+                            </CardContent>
+                        </Card>
 
-                </List>
-                <Divider />
-            </Drawer>
-            <Main open={open}>
-                <DrawerHeader />
-                <Box sx={{ p: 2 }}>
+                    </List>
+                    <Divider />
+                </Drawer>)
+            }
+            <Main open={open} showDrawer={isHomePage}>
+                {
+                    isHomePage && (
+                        <DrawerHeader />
+                    )
+                }
+                <Box sx={{ maxWidth: '1000px', mx: 'auto' }}>
                     {/* Home Component */}
                     <Outlet />
                 </Box>

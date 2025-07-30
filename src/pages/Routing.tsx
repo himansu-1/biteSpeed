@@ -3,7 +3,6 @@ import {
     Routes,
     Route
 } from "react-router-dom";
-import Home from './Home';
 import Draw from '../components/Draw';
 import Layouts from "./Layouts";
 import Editor from "./Editor";
