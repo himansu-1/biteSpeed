@@ -44,8 +44,14 @@ export default function Home(props: any) {
 
             if (!source || !target) return;
 
+            // Source Handle Only One Outgoing Edge
+            const existingEdgeFromSource = edges.find(
+                (e) => e.source === params.source
+            );
+            if (existingEdgeFromSource) return;
+
             const edgeWithArrow: Edge = {
-                id: `${source}-${target}-${Date.now()}`, // ensure a unique ID
+                id: `${target}-${source}-${Date.now()}`, // ensure a unique ID
                 source,
                 target,
                 sourceHandle: params.sourceHandle ?? null,
@@ -85,6 +91,21 @@ export default function Home(props: any) {
         return () => window.removeEventListener('add-text-node', handleAddNode);
     }, [setNodes]);
 
+    // Delete selected node on Delete key press
+    useEffect(() => {
+        const handleKeyDown = (e: any) => {
+            if (e.key === 'Delete' && selectedNode) {
+                setNodes((nds) => nds.filter((n) => n.id !== selectedNode.id));
+                setEdges((eds) =>
+                    eds.filter((e) => e.source !== selectedNode.id && e.target !== selectedNode.id)
+                );
+                setSelectedNode(null);
+            }
+        };
+
+        window.addEventListener('dblclick', handleKeyDown);
+        return () => window.removeEventListener('dblclick', handleKeyDown);
+    }, [selectedNode, setNodes, setEdges]);
     return (
         <div style={{ height: '80vh', width: '100%' }}>
             <ReactFlow
@@ -93,9 +114,9 @@ export default function Home(props: any) {
                 nodeTypes={nodeTypes}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
-                // onReconnectEnd={onReconnectEnd}
                 onEdgeDoubleClick={onEdgeDoubleClick}
                 onConnect={onConnect}
+                onNodeClick={(_, node) => setSelectedNode(node)}
                 fitView
             >
                 <Controls />
